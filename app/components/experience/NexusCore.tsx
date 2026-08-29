@@ -28,6 +28,10 @@ export default function NexusCore() {
     if (innerRef.current) {
       innerRef.current.rotation.x -= delta * 0.16;
       innerRef.current.rotation.y += delta * 0.24;
+
+      innerRef.current.scale.setScalar(
+        0.5 + Math.sin(state.clock.elapsedTime * 1.8) * 0.018,
+      );
     }
 
     if (wireRef.current) {

@@ -1,5 +1,6 @@
 "use client";
 
+import { Trail } from "@react-three/drei";
 import { useFrame } from "@react-three/fiber";
 import { useMemo, useRef } from "react";
 import * as THREE from "three";
@@ -40,6 +41,7 @@ function Orbit({
 
 function Nodes() {
     const groupRef = useRef<THREE.Group>(null);
+    const nodeRefs = useRef<THREE.Mesh[]>([]);
 
     const nodes = useMemo(
         () =>
@@ -51,11 +53,10 @@ function Nodes() {
                     1.65 + Math.sin(index * 2.1) * 0.12;
 
                 return {
-                    position: [
-                        Math.cos(angle) * radius,
-                        Math.sin(angle * 1.7) * 0.3,
-                        Math.sin(angle) * radius,
-                    ]   as [number, number, number,],
+                    angle,
+                    radius,
+                    speed: 0.8 + (index % 5) * 0.12,
+                    height: Math.sin(angle * 1.7) * 0.3,
                 };
             }),
         [],
@@ -64,20 +65,67 @@ function Nodes() {
     useFrame((state) => {
         if (!groupRef.current) return;
 
+        const time = state.clock.elapsedTime;
+
         groupRef.current.rotation.y =
-          state.clock.elapsedTime * 0.035;
+          state.clock.elapsedTime * 0.035 +
+          state.pointer.x * 0.08;
+
+        groupRef.current.rotation.x =
+            Math.sin(time * 0.35) * 0.025 +
+            state.pointer.y * 0.035;
+
+        nodes.forEach((node, index) => {
+            const mesh = nodeRefs.current[index];
+
+            if (!mesh) return;
+
+            const angle =
+                node.angle +
+                time * node.speed * 0.035;
+
+            mesh.position.x =
+                Math.cos(angle) * node.radius;
+
+            mesh.position.y =
+                Math.sin(angle * 1.7) *
+                    0.3 +
+                Math.sin(time * 0.8 + index) *
+                    0.025;
+
+            mesh.position.z =
+                Math.sin(angle) * node.radius;
+        })
     });
 
     return (
         <group ref={groupRef}>
           {nodes.map((node, index) => (
-            <mesh key={index} position={node.position}>
-              <sphereGeometry args={[0.018, 8, 8]} />
+            <Trail
+                key={index}
+                width={0.35}
+                length={3}
+                color="#8dbdff"
+                attenuation={(t) => t * t}
+            >
+                <mesh 
+                    ref={(mesh) => {
+                        if (mesh) {
+                            nodeRefs.current[index] = mesh;
+                        }
+                    }}
+                    position={[0, 0, 0]}
+                >
+                    <sphereGeometry args={[
+                        0.012 + (index % 4) * 0.006, 
+                        8, 
+                        8,
+                    ]}
+                />
 
-              <meshBasicMaterial
-                color="#b8d7ff"
-               />
-            </mesh>
+                    <meshBasicMaterial color="#d8eaff" />
+                </mesh>
+            </Trail>
           ))}
         </group>
     );

@@ -45,8 +45,16 @@ export default function ParticleField() {
   useFrame((state, delta) => {
     if (!pointsRef.current) return;
 
+    const targetX = state.pointer.x * 0.12;
+    const targetY = state.pointer.y * 0.08;
     const targetRotationY = state.pointer.x * 0.035;
     const targetRotationX = state.pointer.y * 0.02;
+
+    pointsRef.current.position.x +=
+      (targetX - pointsRef.current.position.x) * 0.02;
+
+    pointsRef.current.position.y +=
+      (targetY - pointsRef.current.position.y) * 0.02;
 
     pointsRef.current.rotation.y +=
       (targetRotationY - pointsRef.current.rotation.y) * 0.025;

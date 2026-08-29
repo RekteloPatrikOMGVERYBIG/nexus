@@ -3,29 +3,47 @@
 import Link from "next/link";
 import gsap from "gsap";
 import { useEffect, useRef } from "react";
+import { useRouter } from "next/navigation";
 
 export default function HeroInterface() {
   const heroRef = useRef<HTMLElement>(null);
   const buttonRef = useRef<HTMLButtonElement>(null);
+  const router = useRouter();
 
   useEffect(() => {
     const hero = heroRef.current;
     const button = buttonRef.current;
-
+    
     if (!hero || !button) return;
 
+    const heroCopy = hero.querySelector(".hero-copy");
+    const heroHeader = hero.querySelector(".nexus-header");
+    const heroBottom = hero.querySelectorAll(
+      ".hero-bottom-left, .hero-bottom-right, .hero-index"
+    );
     const reduceMotion = window.matchMedia(
       "(prefers-reduced-motion: reduce)",
     ).matches;
 
     const elements = hero.querySelectorAll(
-      "[data-reveal]",
+      "[data-reveal]:not(.hero-title)",
+    );
+
+    const titleLines = hero.querySelectorAll(
+      "[data-title-line]",
     );
 
     if (!reduceMotion) {
       gsap.set(elements, {
         opacity: 0,
         y: 28,
+      });
+
+      gsap.set(titleLines, {
+        autoAlpha: 0,
+        y: 70,
+        rotateX: -18,
+        transformOrigin: "50% 100%",
       });
 
       const timeline = gsap.timeline({
@@ -51,7 +69,20 @@ export default function HeroInterface() {
           "-=0.45",
         )
         .to(
-          hero.querySelectorAll("[data-reveal]"),
+          titleLines,
+          {
+            autoAlpha: 1,
+            y: 0,
+            rotateX: 0,
+            duration: 1.2,
+            stagger: 0.35,
+            ease: "power4.out",
+          },
+          "-=0.5",
+        )
+      
+        .to(
+          hero.querySelectorAll("[data-reveal]:not(.hero-title)"),
           {
             opacity: 1,
             y: 0,
@@ -59,7 +90,7 @@ export default function HeroInterface() {
             stagger: 0.1,
           },
           "-=0.2",
-        );
+        )
     }
 
     const handleMove = (event: MouseEvent) => {
@@ -111,11 +142,48 @@ export default function HeroInterface() {
       resetButton,
     );
 
+    const handleScroll = () => {
+      if (reduceMotion) return;
+
+      const progress = Math.min(
+        window.scrollY / window.innerHeight,
+        1,
+      );
+
+      gsap.to(heroCopy, {
+        opacity: 1 - progress,
+        y: progress * -120,
+        duration: 0.35,
+        ease: "power2.out",
+        overwrite: true,
+      });
+
+      gsap.to(
+        [heroHeader, ...heroBottom],
+        {
+          opacity: 1 - progress,
+          y: progress * -50,
+          duration: 0.35,
+          ease: "power2.out",
+          overwrite: true,
+        },
+      );
+    };
+
+    window.addEventListener("scroll", handleScroll, {
+      passive: true,
+    });
+
     return () => {
       window.removeEventListener(
         "mousemove",
         handleMove,
       );
+
+      window.removeEventListener(
+        "scroll",
+        handleScroll,
+      )
 
       button.removeEventListener(
         "mouseleave",
@@ -170,8 +238,11 @@ export default function HeroInterface() {
           className="hero-title"
           data-reveal
         >
-          <span>INTELLIGENCE</span>
-          <span className="outline">
+          <span data-title-line>INTELLIGENCE</span>
+          <span 
+            className="outline"
+            data-title-line
+          >
             IN MOTION
           </span>
         </h1>
@@ -190,6 +261,7 @@ export default function HeroInterface() {
           type="button"
           className="hero-cta"
           data-reveal
+          onClick={() => router.push("/nexus")}
         >
           <span>ENTER NEXUS</span>
 
