@@ -7,22 +7,12 @@ export default function Home() {
       <NexusScene />
       <HeroInterface />
 
-      <section
-        className="nexus-intelligence"
-        aria-label="Nexus Intelligence"
-      >
-        <span className="section-index">
-          02 / 06
-        </span>
+      <section className="nexus-intelligence" aria-label="Nexus Intelligence">
+        <span className="section-index">02 / 06</span>
 
         <div className="intelligence-network" aria-hidden="true">
           <svg viewBox="0 0 520 520">
-            <circle
-              className="network-orbit"
-              cx="260"
-              cy="260"
-              r="180"
-            />
+            <circle className="network-orbit" cx="260" cy="260" r="180" />
 
             <circle
               className="network-orbit network-orbit-alt"
@@ -32,11 +22,35 @@ export default function Home() {
             />
 
             <line className="network-line" x1="250" y1="90" x2="120" y2="250" />
-            <line className="network-line" x1="120" y1="250" x2="220" y2="390" />
-            <line className="network-line" x1="220" y1="390" x2="400" y2="360" />
-            <line className="network-line" x1="400" y1="360" x2="410" y2="180" />
+            <line
+              className="network-line"
+              x1="120"
+              y1="250"
+              x2="220"
+              y2="390"
+            />
+            <line
+              className="network-line"
+              x1="220"
+              y1="390"
+              x2="400"
+              y2="360"
+            />
+            <line
+              className="network-line"
+              x1="400"
+              y1="360"
+              x2="410"
+              y2="180"
+            />
             <line className="network-line" x1="410" y1="180" x2="250" y2="90" />
-            <line className="network-line" x1="120" y1="250" x2="410" y2="180" />
+            <line
+              className="network-line"
+              x1="120"
+              y1="250"
+              x2="410"
+              y2="180"
+            />
             <line className="network-line" x1="250" y1="90" x2="220" y2="390" />
 
             <circle className="network-node" cx="250" cy="90" r="4" />
@@ -46,7 +60,7 @@ export default function Home() {
             <circle className="network-node" cx="410" cy="180" r="4" />
           </svg>
         </div>
-        
+
         <div className="section-copy">
           <p>ENGINEERING INTELLIGENCE</p>
 
@@ -57,20 +71,14 @@ export default function Home() {
           </h2>
 
           <p>
-            NEXUS connects code, projects,
-            people and AI into one intelligent
+            NEXUS connects code, projects, people and AI into one intelligent
             engineering system.
           </p>
         </div>
       </section>
 
-      <section
-        className="nexus-connections"
-        aria-label="Nexus Connection"
-      >
-        <span className="section-index">
-          03 / 06
-        </span>
+      <section className="nexus-connections" aria-label="Nexus Connection">
+        <span className="section-index">03 / 06</span>
 
         <div className="connections-header">
           <p>CONNECTED INTELLIGENCE</p>
@@ -82,22 +90,16 @@ export default function Home() {
           </h2>
         </div>
 
-        <div 
-          className="connections-system"
-          aria-hidden="true"
-        >
+        <div className="connections-system" aria-hidden="true">
           <div className="system-ring ring-one" />
           <div className="system-ring ring-two" />
 
-          <svg
-            className="connections-lines"
-            viewBox="0 0 800 600"
-          >
+          <svg className="connections-lines" viewBox="0 0 800 600">
             <line x1="400" y1="95" x2="640" y2="300" />
             <line x1="640" y1="300" x2="400" y2="505" />
             <line x1="400" y1="505" x2="160" y2="300" />
             <line x1="160" y1="300" x2="400" y2="95" />
-            
+
             <line x1="400" y1="95" x2="400" y2="505" />
             <line x1="160" y1="300" x2="640" y2="300" />
           </svg>
@@ -124,21 +126,14 @@ export default function Home() {
         </div>
 
         <p className="connections-copy">
-          NEXUS maps the relationships between
-          engineering knowledge, execution and
-          intelligence - turning disconnected
-          information into one working system.
+          NEXUS maps the relationships between engineering knowledge, execution
+          and intelligence - turning disconnected information into one working
+          system.
         </p>
-
       </section>
 
-      <section
-        className="nexus-connection"
-        aria-label="Nexus Connection"
-      >
-        <span className="section-index">
-          04 / 06
-        </span>
+      <section className="nexus-connection" aria-label="Nexus Connection">
+        <span className="section-index">04 / 06</span>
 
         <div className="connection-copy">
           <p>INTELLIGENT CONNECTION</p>
@@ -150,23 +145,14 @@ export default function Home() {
           </h2>
 
           <p>
-            NEXUS turns isolated knowledge,
-            systems and people into a connected
+            NEXUS turns isolated knowledge, systems and people into a connected
             engineering environment.
           </p>
         </div>
 
-        <div
-          className="connection-network"
-          aria-hidden="true"
-        >
+        <div className="connection-network" aria-hidden="true">
           <svg viewBox="0 0 520 520">
-            <circle
-              className="connection-orbit"
-              cx="260"
-              cy="260"
-              r="190"
-            />
+            <circle className="connection-orbit" cx="260" cy="260" r="190" />
 
             <circle
               className="connection-orbit connection-orbit-inner"
@@ -225,38 +211,49 @@ export default function Home() {
 
             <g className="connection-node">
               <circle cx="260" cy="70" r="34" />
-              <text x="260" y="66">01</text>
-              <text x="260" y="77">CODE</text>
+              <text x="260" y="66">
+                01
+              </text>
+              <text x="260" y="77">
+                CODE
+              </text>
             </g>
 
             <g className="connection-node">
               <circle cx="420" cy="260" r="34" />
-              <text x="420" y="256">02</text>
-              <text x="420" y="267">PROJECTS</text>
+              <text x="420" y="256">
+                02
+              </text>
+              <text x="420" y="267">
+                PROJECTS
+              </text>
             </g>
 
             <g className="connection-node">
               <circle cx="260" cy="450" r="34" />
-              <text x="260" y="446">03</text>
-              <text x="260" y="457">PEOPLE</text>
+              <text x="260" y="446">
+                03
+              </text>
+              <text x="260" y="457">
+                PEOPLE
+              </text>
             </g>
 
             <g className="connection-node">
               <circle cx="100" cy="260" r="34" />
-              <text x="100" y="256">04</text>
-              <text x="100" y="267">AI</text>
+              <text x="100" y="256">
+                04
+              </text>
+              <text x="100" y="267">
+                AI
+              </text>
             </g>
           </svg>
         </div>
       </section>
 
-      <section
-        className="nexus-motion"
-        aria-label="Engineering in motion"
-      >
-        <span className="section-index">
-          05 / 06
-        </span>
+      <section className="nexus-motion" aria-label="Engineering in motion">
+        <span className="section-index">05 / 06</span>
 
         <div className="motion-copy">
           <p>ENGINEERING IN MOTION</p>
@@ -279,10 +276,7 @@ export default function Home() {
           <div className="motion-orbit orbit-b" />
           <div className="motion-orbit orbit-c" />
 
-          <svg
-            className="motion-lines"
-            viewBox="0 0 700 700"
-          >
+          <svg className="motion-lines" viewBox="0 0 700 700">
             <line x1="350" y1="70" x2="570" y2="350" />
             <line x1="570" y1="350" x2="350" y2="630" />
             <line x1="350" y1="630" x2="130" y2="350" />

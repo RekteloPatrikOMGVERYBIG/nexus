@@ -1,7 +1,9 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { createClient } from "@/lib/supabase/client";
+import { useRouter } from "next/navigation";
 
 const modules = {
   CODE: {
@@ -37,32 +39,58 @@ const modules = {
 type ModuleName = keyof typeof modules;
 
 export default function NexusPage() {
-  const [activeModule, setActiveModule] =
-    useState<ModuleName>("CODE");
+  const router = useRouter();
+
+  const [activeModule, setActiveModule] = useState<ModuleName>("CODE");
+  const [email, setEmail] = useState("");
+
+  useEffect(() => {
+    const supabase = createClient();
+
+    async function loadProfile() {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+
+      if (user?.email) {
+        setEmail(user.email);
+      }
+    }
+
+    loadProfile();
+  }, []);
+
+  async function handleLogout() {
+    const supabase = createClient();
+
+    await supabase.auth.signOut();
+
+    router.push("/nexus/login");
+    router.refresh();
+  }
 
   const active = modules[activeModule];
 
   return (
     <main className="nexus-dashboard">
       <header className="nexus-dashboard-header">
-        <Link
-          href="/"
-          className="nexus-dashboard-logo"
-        >
+        <Link href="/" className="nexus-dashboard-logo">
           NEXUS<span>®</span>
         </Link>
 
         <div className="nexus-dashboard-status">
           <span />
           SYSTEM ONLINE
+          {email && <small>{email}</small>}
         </div>
 
-        <Link
-          href="/"
+        <button
+          type="button"
+          onClick={handleLogout}
           className="nexus-dashboard-back"
         >
           EXIT
-        </Link>
+        </button>
       </header>
 
       <section className="nexus-dashboard-hero">
@@ -77,42 +105,26 @@ export default function NexusPage() {
             </h2>
           </div>
 
-          <p
-            className="nexus-dashboard-description"
-            key={activeModule}
-          >
+          <p className="nexus-dashboard-description" key={activeModule}>
             {active.description}
           </p>
         </div>
 
         <div className="nexus-dashboard-grid">
-          {(
-            Object.keys(modules) as ModuleName[]
-          ).map((moduleName) => {
+          {(Object.keys(modules) as ModuleName[]).map((moduleName) => {
             const module = modules[moduleName];
-            const isActive =
-              activeModule === moduleName;
+            const isActive = activeModule === moduleName;
 
             return (
               <button
                 key={moduleName}
                 type="button"
-                className={`nexus-module ${
-                  isActive ? "is-active" : ""
-                }`}
-                onClick={() =>
-                  setActiveModule(moduleName)
-                }
+                className={`nexus-module ${isActive ? "is-active" : ""}`}
+                onClick={() => setActiveModule(moduleName)}
               >
                 <span>{module.number}</span>
-
                 <strong>{module.title}</strong>
-
-                <small>
-                  {isActive
-                    ? "ACTIVE"
-                    : module.status}
-                </small>
+                <small>{isActive ? "ACTIVE" : module.status}</small>
               </button>
             );
           })}
@@ -135,7 +147,6 @@ export default function NexusPage() {
           <div className="nexus-system-orbit orbit-one" />
           <div className="nexus-system-orbit orbit-two" />
         </div>
-
       </section>
 
       <footer className="nexus-dashboard-footer">
