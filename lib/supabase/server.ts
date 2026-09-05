@@ -1,27 +1,15 @@
+﻿import "server-only";
 import { createServerClient } from "@supabase/ssr";
 import { cookies } from "next/headers";
+import { supabaseConfig } from "./config";
+import { authFetch } from "../auth/route-client";
 
+// Read-only Server Component client. Proxy refreshes and persists cookies before rendering.
 export async function createClient() {
   const cookieStore = await cookies();
-
-  return createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_PUBLISHARE_KEY!,
-    {
-      cookies: {
-        getAll() {
-          return cookieStore.getAll();
-        },
-        setAll(cookiesToSet) {
-          try {
-            cookiesToSet.forEach(({ name, value, options }) => {
-              cookieStore.set(name, value, options);
-            });
-          } catch {
-            // Cookie changes can be ignored in Server Components
-          }
-        },
-      },
-    },
-  );
+  const { url, key } = supabaseConfig();
+  return createServerClient(url, key, {
+    global: { fetch: authFetch },
+    cookies: { getAll: () => cookieStore.getAll(), setAll() {} },
+  });
 }

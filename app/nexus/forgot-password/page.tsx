@@ -10,8 +10,7 @@ export default async function Page({
   return (
     <AuthShell>
       <AuthForm
-        key={`${params.mode || "login"}:${params.reason || ""}`}
-        mode={params.mode === "resend" ? "resend" : "login"}
+        mode={"recover"}
         next={safeReturnTo(params.next)}
         reason={params.reason}
       />
