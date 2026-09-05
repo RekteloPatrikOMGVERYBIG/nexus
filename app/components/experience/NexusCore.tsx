@@ -42,11 +42,7 @@ export default function NexusCore() {
   });
 
   return (
-    <Float
-      speed={0.8}
-      rotationIntensity={0.12}
-      floatIntensity={0.18}
-    >
+    <Float speed={0.8} rotationIntensity={0.12} floatIntensity={0.18}>
       <mesh ref={outerRef} scale={1.12}>
         <icosahedronGeometry args={[1, 4]} />
 
@@ -88,12 +84,7 @@ export default function NexusCore() {
         />
       </mesh>
 
-      <pointLight
-        color="#efad77"
-        intensity={3.5}
-        distance={4}
-        decay={2}
-      />
+      <pointLight color="#efad77" intensity={3.5} distance={4} decay={2} />
     </Float>
   );
 }

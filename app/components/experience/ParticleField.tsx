@@ -29,14 +29,11 @@ export default function ParticleField() {
       const theta = randomB * Math.PI * 2;
       const phi = Math.acos(2 * randomC - 1);
 
-      data[i3] =
-        radius * Math.sin(phi) * Math.cos(theta);
+      data[i3] = radius * Math.sin(phi) * Math.cos(theta);
 
-      data[i3 + 1] =
-        radius * Math.sin(phi) * Math.sin(theta);
+      data[i3 + 1] = radius * Math.sin(phi) * Math.sin(theta);
 
-      data[i3 + 2] =
-        radius * Math.cos(phi);
+      data[i3 + 2] = radius * Math.cos(phi);
     }
 
     return data;
@@ -68,10 +65,7 @@ export default function ParticleField() {
   return (
     <points ref={pointsRef}>
       <bufferGeometry>
-        <bufferAttribute
-          attach="attributes-position"
-          args={[positions, 3]}
-        />
+        <bufferAttribute attach="attributes-position" args={[positions, 3]} />
       </bufferGeometry>
 
       <pointsMaterial

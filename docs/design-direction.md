@@ -1,4 +1,4 @@
-﻿# NEXUS visual direction
+# NEXUS visual direction
 
 Date: 2026-09-05
 
@@ -46,3 +46,15 @@ System font stacks avoid external font fetching during builds.
 The connected browser tool reported that no browser was available. Desktop/mobile screenshots,
 real WebGL rendering and screen-reader behavior need a browser verification pass; code-level
 checks do not establish visual acceptance. Real account creation and sign-in were not exercised.
+
+## Verification results — 2026-09-06
+
+- Production build completed successfully, including TypeScript and prerendering.
+- Full ESLint check passed before and after the final formatting pass.
+- All 17 proxy regression tests passed, using real Next request/response objects and stubbed Auth.
+- Production HTTP checks: `/` and `/nexus/login` return 200; anonymous `/nexus` and
+  `/nexus/private` redirect once to `/nexus/login`, which returns 200.
+- Landing anchor destinations exist and generated stylesheets return 200.
+- Login HTML contains explicit email/password labels and a live message region.
+- Source files formatted with Prettier. No runtime dependency added.
+- Browser inventory was checked again: no browser or native application was connected.
