@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { Float } from "@react-three/drei";
 import { useFrame } from "@react-three/fiber";
@@ -51,7 +51,7 @@ export default function NexusCore() {
         <icosahedronGeometry args={[1, 4]} />
 
         <meshPhysicalMaterial
-          color="#0d1a2d"
+          color="#535957"
           roughness={0.24}
           metalness={0.5}
           clearcoat={1}
@@ -67,8 +67,8 @@ export default function NexusCore() {
         <icosahedronGeometry args={[1, 3]} />
 
         <meshPhysicalMaterial
-          color="#b9d8ff"
-          emissive="#386ca8"
+          color="#eedbc3"
+          emissive="#c56031"
           emissiveIntensity={1.8}
           roughness={0.08}
           metalness={0.35}
@@ -81,7 +81,7 @@ export default function NexusCore() {
         <icosahedronGeometry args={[1, 2]} />
 
         <meshBasicMaterial
-          color="#8dbdff"
+          color="#d0dbd4"
           wireframe
           transparent
           opacity={0.14}
@@ -89,7 +89,7 @@ export default function NexusCore() {
       </mesh>
 
       <pointLight
-        color="#a8ccff"
+        color="#efad77"
         intensity={3.5}
         distance={4}
         decay={2}

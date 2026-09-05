@@ -1,291 +1,51 @@
-"use client";
+﻿"use client";
 
 import Link from "next/link";
+import { useEffect, useRef, useState } from "react";
 import gsap from "gsap";
-import { useEffect, useRef } from "react";
-import { useRouter } from "next/navigation";
+import { Arrow, Brand } from "../ui/Brand";
+import NexusScene from "../experience/NexusScene";
 
 export default function HeroInterface() {
-  const heroRef = useRef<HTMLElement>(null);
-  const buttonRef = useRef<HTMLButtonElement>(null);
-  const router = useRouter();
-
+  const [menuOpen, setMenuOpen] = useState(false);
+  const root = useRef<HTMLElement>(null);
+  const menuButton = useRef<HTMLButtonElement>(null);
   useEffect(() => {
-    const hero = heroRef.current;
-    const button = buttonRef.current;
-    
-    if (!hero || !button) return;
-
-    const heroCopy = hero.querySelector(".hero-copy");
-    const heroHeader = hero.querySelector(".nexus-header");
-    const heroBottom = hero.querySelectorAll(
-      ".hero-bottom-left, .hero-bottom-right, .hero-index"
-    );
-    const reduceMotion = window.matchMedia(
-      "(prefers-reduced-motion: reduce)",
-    ).matches;
-
-    const elements = hero.querySelectorAll(
-      "[data-reveal]:not(.hero-title)",
-    );
-
-    const titleLines = hero.querySelectorAll(
-      "[data-title-line]",
-    );
-
-    if (!reduceMotion) {
-      gsap.set(elements, {
-        opacity: 0,
-        y: 28,
-      });
-
-      gsap.set(titleLines, {
-        autoAlpha: 0,
-        y: 70,
-        rotateX: -18,
-        transformOrigin: "50% 100%",
-      });
-
-      const timeline = gsap.timeline({
-        defaults: {
-          ease: "power3.out",
-        },
-      });
-
-      timeline
-        .to(
-          hero.querySelector("[data-logo]"),
-          {
-            opacity: 1,
-            duration: 0.8,
-          },
-        )
-        .to(
-          hero.querySelector("[data-status]"),
-          {
-            opacity: 1,
-            duration: 0.6,
-          },
-          "-=0.45",
-        )
-        .to(
-          titleLines,
-          {
-            autoAlpha: 1,
-            y: 0,
-            rotateX: 0,
-            duration: 1.2,
-            stagger: 0.35,
-            ease: "power4.out",
-          },
-          "-=0.5",
-        )
-      
-        .to(
-          hero.querySelectorAll("[data-reveal]:not(.hero-title)"),
-          {
-            opacity: 1,
-            y: 0,
-            duration: 1.1,
-            stagger: 0.1,
-          },
-          "-=0.2",
-        )
-    }
-
-    const handleMove = (event: MouseEvent) => {
-      const rect = button.getBoundingClientRect();
-
-      const x =
-        event.clientX -
-        (rect.left + rect.width / 2);
-
-      const y =
-        event.clientY -
-        (rect.top + rect.height / 2);
-
-      const distance = Math.sqrt(x * x + y * y);
-
-      if (distance < 130) {
-        gsap.to(button, {
-          x: x * 0.18,
-          y: y * 0.18,
-          duration: 0.45,
-          ease: "power3.out",
-        });
-      } else {
-        gsap.to(button, {
-          x: 0,
-          y: 0,
-          duration: 0.7,
-          ease: "elastic.out(1, 0.4)",
-        });
-      }
-    };
-
-    const resetButton = () => {
-      gsap.to(button, {
-        x: 0,
-        y: 0,
-        duration: 0.7,
-        ease: "elastic.out(1, 0.4)",
-      });
-    };
-
-    window.addEventListener(
-      "mousemove",
-      handleMove,
-    );
-
-    button.addEventListener(
-      "mouseleave",
-      resetButton,
-    );
-
-    const handleScroll = () => {
-      if (reduceMotion) return;
-
-      const progress = Math.min(
-        window.scrollY / window.innerHeight,
-        1,
-      );
-
-      gsap.to(heroCopy, {
-        opacity: 1 - progress,
-        y: progress * -120,
-        duration: 0.35,
-        ease: "power2.out",
-        overwrite: true,
-      });
-
-      gsap.to(
-        [heroHeader, ...heroBottom],
-        {
-          opacity: 1 - progress,
-          y: progress * -50,
-          duration: 0.35,
-          ease: "power2.out",
-          overwrite: true,
-        },
-      );
-    };
-
-    window.addEventListener("scroll", handleScroll, {
-      passive: true,
+    const media = gsap.matchMedia();
+    media.add("(prefers-reduced-motion: no-preference)", () => {
+      const context = gsap.context(() => {
+        gsap.from("[data-hero-reveal]", { y: 32, opacity: 0, duration: 1, stagger: 0.12, ease: "power3.out", clearProps: "all" });
+      }, root);
+      return () => context.revert();
     });
-
-    return () => {
-      window.removeEventListener(
-        "mousemove",
-        handleMove,
-      );
-
-      window.removeEventListener(
-        "scroll",
-        handleScroll,
-      )
-
-      button.removeEventListener(
-        "mouseleave",
-        resetButton,
-      );
-
-      gsap.killTweensOf(button);
-    };
+    return () => media.revert();
   }, []);
 
-  return (
-    <section
-      ref={heroRef}
-      className="hero-layer"
-    >
-      <header className="nexus-header">
-       <Link
-          href="/"
-          className="nexus-logo"
-          data-logo
-        >
-          NEXUS<span>®</span>
-        </Link>
-
-        <div
-          className="nexus-status"
-          data-status
-        >
-          <span className="status-dot" />
-          SYSTEM ONLINE
-        </div>
-
-        <button
-          className="menu-button"
-          type="button"
-          aria-label="Open navigation"
-        >
-          <span />
-          <span />
-        </button>
-      </header>
-
+  return <section className="hero" ref={root} id="top">
+    <header className="site-header">
+      <Brand />
+      <nav className="desktop-nav" aria-label="Main navigation"><a href="#workspace">Workspace</a><a href="#system">The system</a><a href="#philosophy">Our philosophy</a></nav>
+      <div className="header-actions"><Link className="header-login" href="/nexus/login">Sign in <Arrow diagonal /></Link><button ref={menuButton} className="menu-toggle" type="button" aria-expanded={menuOpen} aria-controls="mobile-navigation" aria-label={menuOpen ? "Close navigation" : "Open navigation"} onClick={() => setMenuOpen(!menuOpen)}><span /><span /></button></div>
+    </header>
+    <nav id="mobile-navigation" className="mobile-nav" aria-label="Mobile navigation" hidden={!menuOpen} onKeyDown={(event) => { if (event.key === "Escape") { setMenuOpen(false); menuButton.current?.focus(); } }}>
+      {[['#workspace', 'Workspace'], ['#system', 'The system'], ['#philosophy', 'Our philosophy']].map(([href, label]) => <a key={href} href={href} onClick={() => setMenuOpen(false)}>{label}<Arrow /></a>)}
+    </nav>
+    <div className="hero-main content-width">
       <div className="hero-copy">
-        <p
-          className="hero-eyebrow"
-          data-reveal
-        >
-          INTELLIGENCE / 01
-        </p>
-
-        <h1
-          className="hero-title"
-          data-reveal
-        >
-          <span data-title-line>INTELLIGENCE</span>
-          <span 
-            className="outline"
-            data-title-line
-          >
-            IN MOTION
-          </span>
-        </h1>
-
-        <p
-          className="hero-description"
-          data-reveal
-        >
-          The operating system for intelligent teams.
-          <br />
-          Connect ideas, people, data and AI.
-        </p>
-
-        <button
-          ref={buttonRef}
-          type="button"
-          className="hero-cta"
-          data-reveal
-          onClick={() => router.push("/nexus")}
-        >
-          <span>ENTER NEXUS</span>
-
-          <span className="cta-arrow">
-            ↗
-          </span>
-        </button>
+        <div className="eyebrow" data-hero-reveal><span className="signal-dot" /> ENGINEERING, IN A NEW ORBIT</div>
+        <h1 data-hero-reveal>Big ideas.<br />Better <span className="hero-word">connected<span className="orange-dot">.</span></span></h1>
+        <p className="hero-description" data-hero-reveal>A new space for the way you build.<br className="desktop-break" /> Bring code, projects, people, and intelligence into one connected world.</p>
+        <div className="hero-actions" data-hero-reveal><Link className="button button-primary" href="/nexus">Enter NEXUS <Arrow diagonal /></Link><a className="text-link" href="#workspace">Explore the workspace <Arrow /></a></div>
+        <div className="hero-footnote" data-hero-reveal><span className="tiny-cross">+</span> MADE FOR CURIOUS MINDS. BUILT FOR WHAT’S NEXT.</div>
       </div>
-
-      <div className="hero-bottom-left">
-        <span>SCROLL TO EXPLORE</span>
-        <span className="scroll-line" />
+      <div className="hero-art" aria-label="Animated NEXUS core illustration" role="img">
+        <div className="orb-coordinate coordinate-top">FIG. 001 <span>THE CONNECTED CORE</span></div>
+        <div className="orb-reticle" aria-hidden="true" /><NexusScene />
+        <div className="orb-tag orb-tag-code"><span className="tag-dot" /> CODE <span>01</span></div>
+        <div className="orb-tag orb-tag-ai"><span className="tag-dot" /> INTELLIGENCE <span>04</span></div>
+        <div className="orb-coordinate coordinate-bottom"><span>INDEPENDENT IDEAS.</span> SHARED GRAVITY.</div>
       </div>
-
-      <div className="hero-bottom-right">
-        <span>AI / 01</span>
-        <span>CORE ACTIVE</span>
-      </div>
-
-      <div className="hero-index">
-        <strong>01</strong>
-        <span>/</span>
-        <span>06</span>
-      </div>
-    </section>
-  );
+    </div>
+    <div className="hero-bottom content-width"><a href="#workspace" className="scroll-link"><span className="scroll-track" /> SCROLL TO DISCOVER</a><span>FOUR DIMENSIONS. ONE WORKSPACE.</span><span className="edition">NEXUS / EARLY PREVIEW</span></div>
+  </section>;
 }

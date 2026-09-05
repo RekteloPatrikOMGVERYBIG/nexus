@@ -1,160 +1,67 @@
-"use client";
+﻿"use client";
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { createClient } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
+import { createClient } from "@/lib/supabase/client";
+import { Arrow, Brand, ModuleIcon, NexusMark, type ModuleName } from "@/app/components/ui/Brand";
 
-const modules = {
-  CODE: {
-    number: "01",
-    title: "CODE",
-    status: "ACTIVE",
-    description:
-      "Organize engineering logic, source code and technical knowledge in one connected workspace.",
-  },
-  PROJECTS: {
-    number: "02",
-    title: "PROJECTS",
-    status: "SYNCED",
-    description:
-      "Track execution, dependencies and progress across every engineering project.",
-  },
-  PEOPLE: {
-    number: "03",
-    title: "PEOPLE",
-    status: "ONLINE",
-    description:
-      "Connect the people behind the system with context, ownership and shared intelligence.",
-  },
-  AI: {
-    number: "04",
-    title: "AI",
-    status: "READY",
-    description:
-      "Turn engineering knowledge into intelligent actions, recommendations and decisions.",
-  },
-} as const;
-
-type ModuleName = keyof typeof modules;
+const modules: { id: ModuleName; title: string; subtitle: string; description: string; possibilities: string[] }[] = [
+  { id: "code", title: "Code", subtitle: "Keep your best thinking close.", description: "A future home for useful snippets, technical notes, and ideas you want to come back to. Your knowledge, with a little more context.", possibilities: ["Reusable code snippets", "Technical notes", "Connected knowledge"] },
+  { id: "projects", title: "Projects", subtitle: "Give your next idea a direction.", description: "A clearer view of the work you’re moving forward. This space will connect the context, decisions, and progress behind your projects.", possibilities: ["Project overviews", "Progress and milestones", "Related knowledge"] },
+  { id: "people", title: "People", subtitle: "Put the people back in the picture.", description: "A place for the minds behind the work. We’re shaping a way to bring ownership, shared context, and collaboration closer together.", possibilities: ["Team connections", "Clear ownership", "Shared context"] },
+  { id: "ai", title: "Intelligence", subtitle: "Find a different perspective.", description: "Useful intelligence starts with meaningful context. This space explores how your engineering knowledge can open up new possibilities.", possibilities: ["Contextual insights", "Knowledge discovery", "Thoughtful assistance"] },
+];
 
 export default function NexusPage() {
   const router = useRouter();
-
-  const [activeModule, setActiveModule] = useState<ModuleName>("CODE");
+  const [selected, setSelected] = useState<ModuleName | "overview">("overview");
   const [email, setEmail] = useState("");
+  const [profileLoading, setProfileLoading] = useState(true);
+  const [error, setError] = useState("");
+  const [loggingOut, setLoggingOut] = useState(false);
+  const active = modules.find((item) => item.id === selected);
 
   useEffect(() => {
-    const supabase = createClient();
-
+    let mounted = true;
     async function loadProfile() {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
-
-      if (user?.email) {
-        setEmail(user.email);
+      try {
+        const { data: { user }, error: authError } = await createClient().auth.getUser();
+        if (!mounted) return;
+        if (authError) { setError("We couldn’t load your account details. Please refresh to try again."); return; }
+        if (user?.email) setEmail(user.email);
+      } catch {
+        if (mounted) setError("We couldn’t connect to your account. Please refresh to try again.");
+      } finally {
+        if (mounted) setProfileLoading(false);
       }
     }
-
-    loadProfile();
+    void loadProfile();
+    return () => { mounted = false; };
   }, []);
 
   async function handleLogout() {
-    const supabase = createClient();
-
-    await supabase.auth.signOut();
-
-    router.push("/nexus/login");
-    router.refresh();
+    if (loggingOut) return;
+    setLoggingOut(true); setError("");
+    try {
+      const { error: signOutError } = await createClient().auth.signOut();
+      if (signOutError) throw signOutError;
+      router.replace("/nexus/login"); router.refresh();
+    } catch {
+      setError("Sign out didn’t complete. Please try again.");
+    } finally { setLoggingOut(false); }
   }
 
-  const active = modules[activeModule];
-
-  return (
-    <main className="nexus-dashboard">
-      <header className="nexus-dashboard-header">
-        <Link href="/" className="nexus-dashboard-logo">
-          NEXUS<span>®</span>
-        </Link>
-
-        <div className="nexus-dashboard-status">
-          <span />
-          SYSTEM ONLINE
-          {email && <small>{email}</small>}
-        </div>
-
-        <button
-          type="button"
-          onClick={handleLogout}
-          className="nexus-dashboard-back"
-        >
-          EXIT
-        </button>
-      </header>
-
-      <section className="nexus-dashboard-hero">
-        <div className="nexus-dashboard-intro">
-          <p>NEXUS / SYSTEM</p>
-
-          <div className="nexus-dashboard-heading">
-            <h1>CONTROL</h1>
-
-            <h2 key={activeModule}>
-              <span>THE FLOW.</span>
-            </h2>
-          </div>
-
-          <p className="nexus-dashboard-description" key={activeModule}>
-            {active.description}
-          </p>
-        </div>
-
-        <div className="nexus-dashboard-grid">
-          {(Object.keys(modules) as ModuleName[]).map((moduleName) => {
-            const module = modules[moduleName];
-            const isActive = activeModule === moduleName;
-
-            return (
-              <button
-                key={moduleName}
-                type="button"
-                className={`nexus-module ${isActive ? "is-active" : ""}`}
-                onClick={() => setActiveModule(moduleName)}
-              >
-                <span>{module.number}</span>
-                <strong>{module.title}</strong>
-                <small>{isActive ? "ACTIVE" : module.status}</small>
-              </button>
-            );
-          })}
-        </div>
-
-        <div className="nexus-system-visual">
-          <div className="nexus-system-ring ring-a" />
-          <div className="nexus-system-ring ring-b" />
-
-          <div className="nexus-system-cross cross-x" />
-          <div className="nexus-system-cross cross-y" />
-
-          <div
-            className={`nexus-system-core core-${activeModule.toLowerCase()}`}
-          >
-            <span>{active.number}</span>
-            <strong>{active.title}</strong>
-          </div>
-
-          <div className="nexus-system-orbit orbit-one" />
-          <div className="nexus-system-orbit orbit-two" />
-        </div>
-      </section>
-
-      <footer className="nexus-dashboard-footer">
-        <span>NEXUS / 2026</span>
-        <span>
-          {active.number} / 04 — {active.title}
-        </span>
-      </footer>
-    </main>
-  );
+  return <div className="workspace-app">
+    <aside className="workspace-sidebar"><Brand /><div className="workspace-switch"><span className="workspace-avatar"><NexusMark /></span><div><strong>Personal workspace</strong><small>NEXUS / Early preview</small></div></div><p className="sidebar-label">WORKSPACE</p><nav className="sidebar-nav" aria-label="Workspace navigation"><button type="button" aria-label="Overview" className={selected === "overview" ? "active" : ""} aria-pressed={selected === "overview"} onClick={() => setSelected("overview")}><span className="overview-icon">⌘</span><span>Overview</span><span className="nav-active-dot" /></button>{modules.map((item) => <button type="button" key={item.id} aria-label={item.title} className={selected === item.id ? "active" : ""} aria-pressed={selected === item.id} onClick={() => setSelected(item.id)}><ModuleIcon name={item.id} /><span>{item.title}</span><span className="nav-active-dot" /></button>)}</nav><div className="sidebar-bottom"><div className="sidebar-note"><span className="signal-dot" /><strong>A space taking shape.</strong><p>You’re exploring an early version of NEXUS. There’s more on the horizon.</p><Link href="/#system">Explore the vision <Arrow diagonal /></Link></div><div className="account-row"><span className="account-avatar">{email ? email.charAt(0).toUpperCase() : "N"}</span><div><strong>Your account</strong><small title={email}>{profileLoading ? "Loading account…" : email || "Account unavailable"}</small></div><button className="signout-icon" type="button" aria-label={loggingOut ? "Signing out" : "Sign out"} title="Sign out" disabled={loggingOut} onClick={handleLogout}>{loggingOut ? <span className="loading-spinner" /> : "↗"}</button></div></div></aside>
+    <div className="workspace-main"><header className="workspace-topbar"><div><span>NEXUS</span><span className="breadcrumb-divider">/</span><strong>{active?.title || "Overview"}</strong></div><span className="preview-badge"><span className="signal-dot" /> EARLY PREVIEW</span></header>
+      <main className="workspace-content" id="main-content"><div role="status" aria-live="polite">{error && <p className="form-message error">{error}</p>}</div><div className="workspace-welcome"><p className="eyebrow">YOUR SPACE TO BUILD</p><h1>{active ? active.title : <>Welcome to your <span>orbit.</span></>}</h1><p>{active ? active.subtitle : "A little more focus. A lot more possibility. Make yourself at home."}</p></div>
+      {!active ? <>
+        <section className="workspace-banner"><div><span className="eyebrow">INDEPENDENT IDEAS. SHARED GRAVITY.</span><h2>Everything starts<br />with a connection.</h2><p>Four dimensions of your work.<br />One space to bring them together.</p><button type="button" className="text-link" onClick={() => setSelected("code")}>Explore the modules <Arrow /></button></div><div className="banner-orbits" aria-hidden="true"><i /><i /><i /><span><NexusMark /></span></div><span className="banner-index">N / 001</span></section>
+        <div className="workspace-section-title"><h2>Your modules <span>04</span></h2><span>WHAT’S TAKING SHAPE</span></div><div className="module-card-grid">{modules.map((item, index) => <button type="button" className="module-card" key={item.id} onClick={() => setSelected(item.id)}><div className="module-card-top"><ModuleIcon name={item.id} /><span>0{index + 1}</span></div><h3>{item.title}<Arrow diagonal /></h3><p>{item.subtitle}</p><span className="development-status"><i /> In development</span></button>)}</div><section className="workspace-bottom-note"><span className="note-symbol">✳</span><div><h3>Room for what comes next.</h3><p>These modules are a preview of the NEXUS vision. Your first projects and saved ideas will live here as the workspace evolves.</p></div><Link href="/#philosophy" className="text-link">Our philosophy <Arrow diagonal /></Link></section>
+      </> : <section className="module-detail" key={active.id}><div className="detail-top"><span className="development-status"><i /> In development</span><span className="mono">NEXUS / {active.id.toUpperCase()}</span></div><div className="detail-symbol"><ModuleIcon name={active.id} /></div><h2>A new space is taking shape.</h2><p>{active.description}</p><div className="possibility-tags">{active.possibilities.map((item) => <span key={item}>{item}</span>)}</div><p className="detail-note">This module is a preview. Saving and collaboration aren’t available yet.</p><button className="button button-secondary" type="button" onClick={() => setSelected("overview")}>Back to overview <Arrow /></button></section>}
+      <footer className="workspace-footer"><span>BUILT FOR CURIOUS MINDS.</span><span>NEXUS © {new Date().getFullYear()}</span></footer></main>
+    </div>
+  </div>;
 }
+
