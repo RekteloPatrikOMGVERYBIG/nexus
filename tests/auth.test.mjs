@@ -15,6 +15,12 @@ for (const input of [
   "/nexus/../login",
   "/nexus/%255clogin",
   "/nexus/%2flogin",
+  "/nexus/login%3Fnext=/nexus",
+  "/nexus/login%23fragment",
+  "/nexus/%0aprivate",
+  "/nexus/%0dprivate",
+  "/nexus/%09private",
+  "/nexus/%7fprivate",
   "/nexus\\evil",
   "/other",
 ]) {

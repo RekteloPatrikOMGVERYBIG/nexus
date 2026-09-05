@@ -20,7 +20,7 @@ Open http://localhost:3000. The sign-in page is at `/nexus/login`; `/login` redi
 npm run check
 ```
 
-This runs ESLint, 41 automated auth tests, a production build (including TypeScript), and HTTP smoke checks against a temporary local production server. The smoke script shuts down its server afterward. It selects an available local port; use `SMOKE_PORT` to choose a specific port.
+This runs ESLint, automated auth regression tests, a production build (including TypeScript), and HTTP smoke checks against a temporary local production server. The smoke script shuts down its server afterward. It selects an available local port; use `SMOKE_PORT` to choose a specific port.
 
 Individual commands: `npm test`, `npm run typecheck`, `npm run build`, and `npm run test:smoke` (requires a build).
 

@@ -26,7 +26,8 @@ export function safeReturnTo(value: unknown): string {
     if (
       url.origin !== "https://nexus.invalid" ||
       path.includes("//") ||
-      /[%\\]/.test(path) ||
+      // Decoding must not introduce URL delimiters or control characters.
+      /[%\\?#\u0000-\u0020\u007f]/.test(path) ||
       !(path === "/nexus" || path.startsWith("/nexus/")) ||
       [...publicAuthRoutes].some(
         (route) => path === route || path.startsWith(route + "/"),
